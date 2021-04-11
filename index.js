@@ -13,6 +13,8 @@ express.urlencoded({
   extended: true
 })
 
+//here was router
+
 app.use(express.json())
 
 //managing room
