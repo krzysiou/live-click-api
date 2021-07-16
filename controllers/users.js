@@ -7,6 +7,22 @@ const checkUsers = (users) => {
     }
 }
 
+const addUser = (users) => {
+    return (req, res) => {
+        const usrnm = req.body.username
+        const userId = req.body.userId
+        const passwd = req.body.password
+        
+        let user = {
+            username : usrnm,
+            password  : passwd
+          };
+        users[userId] = user;
+
+        res.status(201).json({name: users[userId]})
+    }
+}
+
 const updateUser = (users) => {
     return (req, res) => {
         const userId = req.params.userId
@@ -18,12 +34,12 @@ const updateUser = (users) => {
         
         const name = req.body.name
         if(!name){
-            users[userId] = names[Math.floor(Math.random() * names.length)];
+            users[userId].username = names[Math.floor(Math.random() * names.length)];
         } else {
-            users[userId] = name
+            users[userId].username = name
         }
         res.status(201).json({name: users[userId]})
     }
 }
 
-module.exports = { checkUsers, updateUser }
+module.exports = { checkUsers, updateUser, addUser }
