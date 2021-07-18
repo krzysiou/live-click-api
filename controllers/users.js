@@ -14,8 +14,8 @@ const addUser = (users) => {
         const passwd = req.body.password
         
         let user = {
-            username : usrnm,
-            password  : passwd
+            username: usrnm,
+            password: passwd
           };
         users[userId] = user;
 
@@ -32,13 +32,11 @@ const updateUser = (users) => {
           return
         }
         
-        const name = req.body.name
-        if(!name){
-            users[userId].username = names[Math.floor(Math.random() * names.length)];
-        } else {
-            users[userId].username = name
+        const usrname = req.body.name
+        if(usrname){
+            users[userId].username = usrname
         }
-        res.status(201).json({name: users[userId]})
+        res.status(201).json({name: users[userId].username})
     }
 }
 
