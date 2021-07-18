@@ -9,12 +9,6 @@ const port = 3000
 const rooms = {};
 const users = {};
 
-express.urlencoded({
-  extended: true
-})
-
-//here was router
-
 app.use(express.json())
 
 //managing room

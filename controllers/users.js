@@ -12,6 +12,12 @@ const addUser = (users) => {
         const usrnm = req.body.username
         const userId = req.body.userId
         const passwd = req.body.password
+
+        const usernameTaken = Object.values(users).map(user => user.username).some(username => username === usrnm)
+        if (usernameTaken) {
+            res.status(400).json({error: 'Username taken'})
+            return
+        }
         
         let user = {
             username: usrnm,
@@ -19,7 +25,7 @@ const addUser = (users) => {
           };
         users[userId] = user;
 
-        res.status(201).json({name: users[userId]})
+        res.status(201).json(users)
     }
 }
 
