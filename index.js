@@ -1,13 +1,13 @@
 const { checkRooms, createRoom, deleteRoom } = require('./controllers/rooms.js');
-const { checkUsers, updateUser, addUser } = require('./controllers/users.js');
+const { checkUsers, updateUser, registerUser, loginUser } = require('./controllers/users.js');
 const { json } = require('express');
 const express = require('express')
 const app = express()
 const port = 3000
 
 
-const rooms = {};
-const users = {};
+const rooms = [];
+const users = [];
 
 app.use(express.json())
 
@@ -18,7 +18,8 @@ app.delete('/rooms/:roomId', deleteRoom(rooms))
 
 //managing user
 app.get('/users', checkUsers(users))
-app.post('/users', addUser(users))
+app.post('/users/register', registerUser(users))
+app.post('/users/login', loginUser(users))
 app.patch('/users/:userId', updateUser(users))
 
 app.listen(port, () => {
