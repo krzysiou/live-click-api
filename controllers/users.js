@@ -32,7 +32,6 @@ const registerUser = (users) => {
                 username: req.body.username,
                 password: hashedPassword
               }
-    
             //add user to user pool
             users.push(user)
             res.status(201).send()
