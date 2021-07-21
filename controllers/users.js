@@ -3,7 +3,6 @@ require('dotenv').config()
 const bcrypt = require('bcrypt')
 const {registerValidation, loginValidation, usernameUpdateValidation} = require('./validation')
 const jwt = require('jsonwebtoken')
-const checkAuth = require('./check-auth')
 
 const checkUsers = (users) => {
     return (req, res) => {
@@ -56,13 +55,18 @@ const loginUser = (users) => {
         try {
             //IF PASSWORD CORRECT
           if(await bcrypt.compare(req.body.password, user.password)){
-              //GENERATE JWT
-              const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-              console.log(accessToken)
-              res.json({
-                id: user.id,
-                accessToken: accessToken 
-                })
+              if (req.body.generateToken === true){
+                  //GENERATE JWT
+                  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+                  res.json({
+                    id: user.id,
+                    accessToken: accessToken 
+                    })
+              } else {
+                res.json({
+                    id: user.id,
+                    })
+              }
             //IF PASSWORD INCORRECT
           } else {
             res.status(400).json({error: 'Not Allowed'})
