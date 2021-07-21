@@ -1,7 +1,9 @@
 require('dotenv').config()
+
 const bcrypt = require('bcrypt')
 const {registerValidation, loginValidation, usernameUpdateValidation} = require('./validation')
 const jwt = require('jsonwebtoken')
+const checkAuth = require('./check-auth')
 
 const checkUsers = (users) => {
     return (req, res) => {
