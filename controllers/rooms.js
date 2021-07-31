@@ -1,4 +1,4 @@
-const { uuid } = require('uuidv4');
+const jwt = require('jsonwebtoken');
 
 const checkRooms = (rooms) => {
     return (req, res) => {
@@ -9,18 +9,29 @@ const checkRooms = (rooms) => {
 const createRoom = (rooms) => {
     return (req, res) => {
         const ownerId = req.body.ownerId
+        const roomId = req.body.roomId
       
         if(!ownerId){
           res.status(400).json({})
           return
         }
-      
-        const roomId = uuid()
-      
+    
         const room = createNewRoom(roomId, ownerId)
-        rooms[room.id] = room
+        rooms.push(room)
         res.status(201).json(room)
       }
+}
+
+const addUserToRoom = (users, rooms) => {
+  return (req, res) => {
+    const roomId = req.params.roomId
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.decode(token)
+    const user = users.find(user => user.id === decoded.id)
+    const room = rooms.find(room => room.id === roomId)
+    room.users.push(user)
+    res.status(200).json({})
+  }
 }
 
 const deleteRoom = (rooms) => {
@@ -44,10 +55,9 @@ const deleteRoom = (rooms) => {
   }
 }
 
-module.exports = { checkRooms, createRoom, deleteRoom }
+module.exports = { checkRooms, createRoom, deleteRoom, addUserToRoom }
 
 function createNewRoom(id, ownerId){
-	console.log(id, ownerId)
 	return {
 		id,
 		ownerId,

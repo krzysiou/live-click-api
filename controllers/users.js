@@ -54,23 +54,18 @@ const loginUser = (users) => {
         }
         try {
             //IF PASSWORD CORRECT
-          if(await bcrypt.compare(req.body.password, user.password)){
-              if (req.body.generateToken === true){
-                  //GENERATE JWT
-                  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-                  res.json({
-                    id: user.id,
-                    accessToken: accessToken 
-                    })
-              } else {
+            if(await bcrypt.compare(req.body.password, user.password)){
+                //GENERATE JWT
+                const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
                 res.json({
-                    id: user.id,
-                    })
-              }
+                id: user.id,
+                accessToken: accessToken 
+                })
+            } 
             //IF PASSWORD INCORRECT
-          } else {
+            else {
             res.status(400).json({error: 'Not Allowed'})
-          }
+            }
         } catch {
           res.status(500).send()
         }
