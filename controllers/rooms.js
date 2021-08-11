@@ -60,6 +60,9 @@ const deleteRoom = (rooms) => {
   return (req, res) => {
     //GET OWNERID AND ROOMID
     const roomId = req.params.roomId
+    const token = req.headers.authorization.split(" ")[1]
+    const decoded = jwt.decode(token)
+    const userId = decoded.id
   
     if(!roomId){
       res.status(400).json({})
@@ -69,8 +72,7 @@ const deleteRoom = (rooms) => {
     const room = rooms.find(room => room.id === roomId)
 
     //IF AUTHORIZED DELETE ROOM
-    if(room && room.users.length === 0){
-      console.log('usunieto')
+    if(room && room.ownerId === userId){
       index = rooms.findIndex(r => r.id === roomId)
       rooms.splice(index,1)
 
@@ -89,6 +91,5 @@ function createNewRoom(id, ownerId){
 		id,
 		ownerId,
 		users: [],
-		isPlaying: false,
 	}
 }
