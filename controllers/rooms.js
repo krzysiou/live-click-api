@@ -15,11 +15,16 @@ const createRoom = (rooms) => {
           res.status(400).json({})
           return
         }
-        //CREATE ROOM
-        const room = createNewRoom(ownerId)
-        //ADD ROOM TO ARRAY
-        rooms.push(room)
-        res.status(201).json(room)
+        const flag = rooms.find(r => r.id === ownerId)
+        if(!flag){
+          //CREATE ROOM
+          const room = createNewRoom(ownerId)
+          //ADD ROOM TO ARRAY
+          rooms.push(room)
+          res.status(201).json(room)
+        } else {
+          res.status(400).json({})
+        }
       }
 }
 
@@ -35,7 +40,10 @@ const addUserToRoom = (users, rooms) => {
     //FIND ROOM VIA ROOMID
     const room = rooms.find(room => room.id === roomId)
     //ADD USER TO ROOM
-    room.users.push(user)
+    const flag = room.users.find(usr => usr.id === user.id)
+    if(!flag){
+      room.users.push(user)
+    }
     res.status(200).json({})
   }
 }
@@ -98,16 +106,19 @@ const userToBracket = (users, rooms) => {
     //check if exists
     const flag = room.bracket.includes(user, 0)
     //IF AUTHORIZED
-    console.log(room.bracket.length)
-    if(room && room.bracket.length < 3){
-      if(!flag){
-        room.bracket.push(user)
-        res.status(200).json({})
+    if(room.isPlaying){
+      if(room && room.bracket.length < 3){
+        if(!flag){
+          room.bracket.push(user)
+          res.status(200).json({})
+        } else {
+          res.status(400).json({error: 'You already clicked'})
+        }
       } else {
-        res.status(400).json({error: 'You already clicked'})
+        res.status(401).json({error: 'Too late'})
       }
     } else {
-      res.status(401).json({error: 'Too late'})
+      res.status(400).json({error: 'Not playing right now'})
     }
   }
 }
@@ -128,6 +139,7 @@ const clearBracket = (rooms) => {
 
     //IF AUTHORIZED
     if(room && userId === room.ownerId){
+      room.isPlaying = false
       room.bracket = []
       res.status(200).json({})
     } else {
@@ -136,7 +148,31 @@ const clearBracket = (rooms) => {
   }
 }
 
-module.exports = { checkRooms, createRoom, deleteRoom, addUserToRoom, removeUserFromRoom, userToBracket, clearBracket }
+const play = (rooms) => {
+  return (req, res) => {
+    //GET OWNERID AND ROOMID
+    const roomId = req.params.roomId
+    const userId = req.userData.id
+    
+    if(!roomId){
+      res.status(400).json({})
+      return
+    }
+    
+    //FIND ROOM
+    const room = rooms.find(room => room.id === roomId)
+
+    //IF AUTHORIZED
+    if(room && userId === room.ownerId){
+      room.isPlaying = true
+      res.status(200).json({})
+    } else {
+      res.status(400).json({error: 'Error'})
+    }
+  }
+}
+
+module.exports = { checkRooms, createRoom, deleteRoom, addUserToRoom, removeUserFromRoom, userToBracket, clearBracket, play }
 
 function createNewRoom(ownerId){
   //CREATE OBJECT ROOM
@@ -144,6 +180,7 @@ function createNewRoom(ownerId){
 		id: ownerId,
 		ownerId,
 		users: [],
-    bracket: []
+    bracket: [],
+    isPlaying: false
 	}
 }

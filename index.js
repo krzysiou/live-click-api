@@ -1,4 +1,4 @@
-const { checkRooms, createRoom, deleteRoom, addUserToRoom, removeUserFromRoom, userToBracket, clearBracket } = require('./controllers/rooms.js');
+const { checkRooms, createRoom, deleteRoom, addUserToRoom, removeUserFromRoom, userToBracket, clearBracket, play } = require('./controllers/rooms.js');
 const { checkUsers, updateUser, registerUser, loginUser } = require('./controllers/users.js');
 const { json } = require('express');
 const express = require('express')
@@ -20,6 +20,7 @@ app.post('/rooms/:roomId/leave', removeUserFromRoom(users, rooms))
 app.delete('/rooms/:roomId', checkAuth, deleteRoom(rooms))
 app.patch('/rooms/:roomId', checkAuth, userToBracket(users, rooms))
 app.patch('/rooms/:roomId/clear', checkAuth, clearBracket(rooms))
+app.patch('/rooms/:roomId/play', checkAuth, play(rooms))
 
 //managing user
 app.get('/users', checkUsers(users))
