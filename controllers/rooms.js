@@ -163,8 +163,8 @@ const play = (rooms) => {
     const room = rooms.find(room => room.id === roomId)
 
     //IF AUTHORIZED
-    if(room && userId === room.ownerId){
-      room.isPlaying = true
+    if(room && userId === room.ownerId && room.isPlaying === false){
+      setTimeout(changeStatus, 5000, room)
       res.status(200).json({})
     } else {
       res.status(400).json({error: 'Error'})
@@ -183,4 +183,9 @@ function createNewRoom(ownerId){
     bracket: [],
     isPlaying: false
 	}
+}
+
+function changeStatus(room){
+  room.isPlaying = true
+  return
 }
