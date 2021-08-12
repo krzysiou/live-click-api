@@ -70,7 +70,6 @@ const deleteRoom = (rooms) => {
     }
     //FIND ROOM
     const room = rooms.find(room => room.id === roomId)
-
     //IF AUTHORIZED DELETE ROOM
     if(room && room.ownerId === userId){
       index = rooms.findIndex(r => r.id === roomId)
@@ -83,7 +82,38 @@ const deleteRoom = (rooms) => {
   }
 }
 
-module.exports = { checkRooms, createRoom, deleteRoom, addUserToRoom, removeUserFromRoom }
+const userToBracket = (users, rooms) => {
+  return (req, res) => {
+    //GET OWNERID AND ROOMID
+    const roomId = req.params.roomId
+    const userId = req.userData.id
+  
+    if(!roomId){
+      res.status(400).json({})
+      return
+    }
+    
+    //FIND ROOM
+    const room = rooms.find(room => room.id === roomId)
+    //FIND USER
+    const user = users.find(user => user.id === userId)
+    //check if exists
+    const flag = room.bracket.includes(user, 0)
+    //IF AUTHORIZED
+    if(room && room.bracket.length < 3){
+      if(!flag){
+        room.bracket.push(user)
+        res.status(200).json({})
+      } else {
+        res.status(400).json({error: 'You already clicked'})
+      }
+    } else {
+      res.status(401).json({error: 'Too late'})
+    }
+  }
+}
+
+module.exports = { checkRooms, createRoom, deleteRoom, addUserToRoom, removeUserFromRoom, userToBracket }
 
 function createNewRoom(id, ownerId){
   //CREATE OBJECT ROOM
@@ -91,5 +121,6 @@ function createNewRoom(id, ownerId){
 		id,
 		ownerId,
 		users: [],
+    bracket: []
 	}
 }
