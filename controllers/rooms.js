@@ -10,14 +10,13 @@ const createRoom = (rooms) => {
     return (req, res) => {
       //GET OWNERID AND ROOMID
         const ownerId = req.body.ownerId
-        const roomId = req.body.roomId
       
         if(!ownerId){
           res.status(400).json({})
           return
         }
         //CREATE ROOM
-        const room = createNewRoom(roomId, ownerId)
+        const room = createNewRoom(ownerId)
         //ADD ROOM TO ARRAY
         rooms.push(room)
         res.status(201).json(room)
@@ -63,7 +62,6 @@ const deleteRoom = (rooms) => {
     const token = req.headers.authorization.split(" ")[1]
     const decoded = jwt.decode(token)
     const userId = decoded.id
-  
     if(!roomId){
       res.status(400).json({})
       return
@@ -92,7 +90,7 @@ const userToBracket = (users, rooms) => {
       res.status(400).json({})
       return
     }
-    
+
     //FIND ROOM
     const room = rooms.find(room => room.id === roomId)
     //FIND USER
@@ -100,6 +98,7 @@ const userToBracket = (users, rooms) => {
     //check if exists
     const flag = room.bracket.includes(user, 0)
     //IF AUTHORIZED
+    console.log(room.bracket.length)
     if(room && room.bracket.length < 3){
       if(!flag){
         room.bracket.push(user)
@@ -113,12 +112,36 @@ const userToBracket = (users, rooms) => {
   }
 }
 
-module.exports = { checkRooms, createRoom, deleteRoom, addUserToRoom, removeUserFromRoom, userToBracket }
+const clearBracket = (rooms) => {
+  return (req, res) => {
+    //GET OWNERID AND ROOMID
+    const roomId = req.params.roomId
+    const userId = req.userData.id
+    
+    if(!roomId){
+      res.status(400).json({})
+      return
+    }
+    
+    //FIND ROOM
+    const room = rooms.find(room => room.id === roomId)
 
-function createNewRoom(id, ownerId){
+    //IF AUTHORIZED
+    if(room && userId === room.ownerId){
+      room.bracket = []
+      res.status(200).json({})
+    } else {
+      res.status(400).json({error: 'Error'})
+    }
+  }
+}
+
+module.exports = { checkRooms, createRoom, deleteRoom, addUserToRoom, removeUserFromRoom, userToBracket, clearBracket }
+
+function createNewRoom(ownerId){
   //CREATE OBJECT ROOM
 	return {
-		id,
+		id: ownerId,
 		ownerId,
 		users: [],
     bracket: []
