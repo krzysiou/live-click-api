@@ -14,7 +14,7 @@ app.use(express.json())
 
 //managing room
 app.get('/rooms', checkRooms(rooms))
-app.post('/rooms', createRoom(rooms))
+app.post('/rooms', checkAuth, createRoom(rooms))
 app.get('/rooms/:roomId', checkAuth, addUserToRoom(users, rooms))
 app.post('/rooms/:roomId/leave', checkAuth, removeUserFromRoom(users, rooms))
 app.delete('/rooms/:roomId', checkAuth, deleteRoom(rooms))
