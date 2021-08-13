@@ -103,11 +103,13 @@ const userToBracket = (users, rooms) => {
     const room = rooms.find(room => room.id === roomId)
     //FIND USER
     const user = users.find(user => user.id === userId)
-    //check if exists
+    //CHECK IF USER ALREADY IN BRACKET
     const flag = room.bracket.includes(user, 0)
+
     //IF AUTHORIZED
     if(room.isPlaying){
       if(room && room.bracket.length < 3){
+        //IF USER NOT IN BRACKET
         if(!flag){
           room.bracket.push(user)
           res.status(200).json({})
@@ -137,7 +139,7 @@ const clearBracket = (rooms) => {
     //FIND ROOM
     const room = rooms.find(room => room.id === roomId)
 
-    //IF AUTHORIZED
+    //IF AUTHORIZED CLEAR BRACKET
     if(room && userId === room.ownerId){
       room.isPlaying = false
       room.bracket = []
@@ -162,7 +164,7 @@ const play = (rooms) => {
     //FIND ROOM
     const room = rooms.find(room => room.id === roomId)
 
-    //IF AUTHORIZED
+    //IF AUTHORIZED START GAME IN 5 SECONDS
     if(room && userId === room.ownerId && room.isPlaying === false){
       setTimeout(changeStatus, 5000, room)
       res.status(200).json({})
@@ -186,6 +188,7 @@ function createNewRoom(ownerId){
 }
 
 function changeStatus(room){
+  //CHANGE ROOM STATUS
   room.isPlaying = true
   return
 }
