@@ -2,6 +2,12 @@
 
 This is a ```Node.js RestAPI``` developed for my [live-click](https://github.com/krzysiou/live-click) website. It contains endpoints which allow front-end to send and request data. It got hot-reload feature using nodemon. To host server on your computer simply type ```npm install``` and follow it by ```nodemon index.js```.
 
+## Technologies
+
+- Express
+- Joi
+- JWT
+
 ## Overview
 
 The most important file on the whole server must be [index.js](./index.js), it contains all endpoints corresponding to given functions that will be called upon request hitting the endpoint.
